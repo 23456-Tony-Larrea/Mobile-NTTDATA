@@ -22,7 +22,12 @@ export const DeleteProductAction = async (id: string): Promise<void> => {
   await axios.delete(`${apiUrl}/${id}`);
 };
 
-export const verificateIdProduct = async (id: string): Promise<Product> => {
-  const response = await axios.get(`${apiUrl}/verification/${id}`);
-  return response.data;
+export const verifyIdExists = async (id: string): Promise<boolean> => {
+  try {
+    const response = await axios.get(`${apiUrl}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying ID:", error);
+    return false;
+  }
 };

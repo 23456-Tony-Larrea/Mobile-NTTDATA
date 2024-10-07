@@ -1,18 +1,50 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
-import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '../url/types';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { DeleteProductAction } from '../actions/ProductActions';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../url/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { DeleteProductAction } from "../actions/ProductActions";
 
-type ProductDetailScreenRouteProp = RouteProp<RootStackParamList, 'Detalles del Producto'>;
-type ProductDetailScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Detalles del Producto'>;
+type ProductDetailScreenRouteProp = RouteProp<
+  RootStackParamList,
+  "Detalles del Producto"
+>;
+type ProductDetailScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  "Detalles del Producto"
+>;
 
 export default function ProductDetailScreen() {
   const route = useRoute<ProductDetailScreenRouteProp>();
   const navigation = useNavigation<ProductDetailScreenNavigationProp>();
   const { product } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data fetching
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Simulate a delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleDelete = async () => {
     try {
@@ -20,9 +52,25 @@ export default function ProductDetailScreen() {
       setModalVisible(false);
       navigation.goBack();
     } catch (error) {
-      console.error('Error eliminando producto:', error);
+      console.error("Error eliminando producto:", error);
     }
   };
+
+  if (loading) {
+    return (
+      <SkeletonPlaceholder>
+        <View style={styles.card}>
+          <View style={styles.skeletonHeader} />
+          <View style={styles.skeletonContent} />
+          <View style={styles.skeletonContent} />
+          <View style={styles.skeletonImage} />
+          <View style={styles.skeletonContent} />
+          <View style={styles.skeletonContent} />
+          <View style={styles.skeletonFooter} />
+        </View>
+      </SkeletonPlaceholder>
+    );
+  }
 
   return (
     <View style={styles.card}>
@@ -42,7 +90,9 @@ export default function ProductDetailScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Logo</Text>
           <Image
-            source={{ uri: 'https://www.visa.com.ec/dam/VCOM/regional/lac/SPA/Default/Pay%20With%20Visa/Tarjetas/visa-signature-400x225.jpg' }}
+            source={{
+              uri: "https://www.visa.com.ec/dam/VCOM/regional/lac/SPA/Default/Pay%20With%20Visa/Tarjetas/visa-signature-400x225.jpg",
+            }}
             style={styles.logo}
             alt="Logo del producto"
           />
@@ -59,7 +109,7 @@ export default function ProductDetailScreen() {
       <View style={styles.cardFooter}>
         <TouchableOpacity
           style={[styles.button, styles.buttonOutline]}
-          onPress={() => navigation.navigate('Editar Producto', { product })}
+          onPress={() => navigation.navigate("Editar Producto", { product })}
         >
           <Text style={styles.buttonText}>Editar</Text>
         </TouchableOpacity>
@@ -79,7 +129,9 @@ export default function ProductDetailScreen() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>¿Estás seguro que quieres eliminar el producto "{product.name}"?</Text>
+            <Text style={styles.modalText}>
+              ¿Estás seguro que quieres eliminar el producto "{product.name}"?
+            </Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.button, styles.buttonOutline]}
@@ -103,12 +155,12 @@ export default function ProductDetailScreen() {
 
 const styles = StyleSheet.create({
   card: {
-    width: '100%',
+    width: "100%",
     maxWidth: 400,
-    marginHorizontal: 'auto',
-    backgroundColor: '#fff',
+    marginHorizontal: "auto",
+    backgroundColor: "#fff",
     borderRadius: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -120,11 +172,11 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   textMuted: {
     fontSize: 14,
-    color: '#6c757d',
+    color: "#6c757d",
   },
   cardContent: {
     marginBottom: 16,
@@ -134,51 +186,51 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
   },
   logo: {
-    width: '100%',
+    width: "100%",
     height: 150,
     borderRadius: 8,
   },
   cardFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   button: {
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonOutline: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: "#E3F2FD",
     padding: 15,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonDestructive: {
-    backgroundColor: '#dc3545',
+    backgroundColor: "#dc3545",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
     width: 300,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 8,
     padding: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -187,11 +239,35 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  skeletonHeader: {
+    width: "100%",
+    height: 20,
+    borderRadius: 4,
+    marginBottom: 16,
+  },
+  skeletonContent: {
+    width: "100%",
+    height: 20,
+    borderRadius: 4,
+    marginBottom: 16,
+  },
+  skeletonImage: {
+    width: "100%",
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  skeletonFooter: {
+    width: "100%",
+    height: 50,
+    borderRadius: 4,
+    marginBottom: 16,
   },
 });

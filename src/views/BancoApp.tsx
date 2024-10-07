@@ -1,9 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { GetProductsAction } from '../actions/ProductActions';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../url/types';
-import { Product } from '../models/Product';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { GetProductsAction } from "../actions/ProductActions";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../url/types";
+import { Product } from "../models/Product";
 
 interface ItemProps {
   nombre: string;
@@ -17,14 +25,32 @@ const Item = ({ nombre, id, onPress }: ItemProps) => (
       <Text style={styles.nombre}>{nombre}</Text>
       <Text style={styles.id}>ID: {id}</Text>
     </View>
-    <Text style={styles.arrow}>{'>'}</Text>
+    <Text style={styles.arrow}>{">"}</Text>
   </TouchableOpacity>
+);
+
+const SkeletonItem = () => (
+  <SkeletonPlaceholder>
+    <View style={styles.item}>
+      <View>
+        <SkeletonPlaceholder.Item width={120} height={20} borderRadius={4} />
+        <SkeletonPlaceholder.Item
+          width={80}
+          height={20}
+          borderRadius={4}
+          marginTop={6}
+        />
+      </View>
+      <SkeletonPlaceholder.Item width={20} height={20} borderRadius={4} />
+    </View>
+  </SkeletonPlaceholder>
 );
 
 export default function BancoApp() {
   const [data, setData] = useState<Product[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
@@ -35,6 +61,8 @@ export default function BancoApp() {
         setFilteredData(result);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -42,7 +70,7 @@ export default function BancoApp() {
   }, []);
 
   useEffect(() => {
-    const filtered = data.filter(product =>
+    const filtered = data.filter((product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(filtered);
@@ -52,9 +80,13 @@ export default function BancoApp() {
     <Item
       nombre={item.name}
       id={item.id}
-      onPress={() => navigation.navigate('Detalles del Producto', { product: item })}
+      onPress={() =>
+        navigation.navigate("Detalles del Producto", { product: item })
+      }
     />
   );
+
+  const renderSkeletonItem = () => <SkeletonItem />;
 
   return (
     <View style={styles.container}>
@@ -65,14 +97,22 @@ export default function BancoApp() {
         value={searchTerm}
         onChangeText={setSearchTerm}
       />
-      <FlatList
-        data={filteredData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
+      {loading ? (
+        <FlatList
+          data={[...Array(10).keys()]}
+          renderItem={renderSkeletonItem}
+          keyExtractor={(item) => item.toString()}
+        />
+      ) : (
+        <FlatList
+          data={filteredData}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      )}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate('Formulario de Registro')}
+        onPress={() => navigation.navigate("Formulario de Registro")}
       >
         <Text style={styles.addButtonText}>Agregar</Text>
       </TouchableOpacity>
@@ -83,52 +123,52 @@ export default function BancoApp() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
   },
   headerText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   searchInput: {
     height: 40,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderWidth: 1,
     paddingLeft: 10,
     margin: 10,
     borderRadius: 5,
   },
   item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: "#ddd",
   },
   nombre: {
     fontSize: 16,
   },
   id: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
   },
   arrow: {
     fontSize: 18,
-    color: '#999',
+    color: "#999",
   },
   addButton: {
-    backgroundColor: 'yellow',
+    backgroundColor: "yellow",
     padding: 15,
-    alignItems: 'center',
+    alignItems: "center",
     margin: 10,
   },
   addButtonText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
