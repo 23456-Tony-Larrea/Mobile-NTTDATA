@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
+  Alert,
 } from "react-native";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
@@ -30,11 +31,10 @@ export default function ProductDetailScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate data fetching
+
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Simulate a delay
         await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (error) {
         console.error(error);
@@ -50,9 +50,11 @@ export default function ProductDetailScreen() {
     try {
       await DeleteProductAction(product.id);
       setModalVisible(false);
+      Alert.alert("Éxito", "Producto eliminado con éxito");
       navigation.goBack();
     } catch (error) {
       console.error("Error eliminando producto:", error);
+      Alert.alert("Error", "Hubo un error al eliminar el producto");
     }
   };
 

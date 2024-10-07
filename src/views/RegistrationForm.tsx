@@ -7,6 +7,7 @@ import {
   ScrollView,
   Platform,
   TextInput,
+  Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
@@ -28,11 +29,9 @@ export default function RegistrationForm() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate data fetching
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Simulate a delay
         await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (error) {
         console.error(error);
@@ -72,9 +71,11 @@ export default function RegistrationForm() {
     try {
       const response = await CreateProductAction(productData);
       setErrors({});
+      Alert.alert("Éxito", "Producto agregado con éxito");
     } catch (error) {
       console.error("Error creating product:", error);
       setErrors(handleApiErrors(error));
+      Alert.alert("Error", "Hubo un error al agregar el producto");
     }
   };
 

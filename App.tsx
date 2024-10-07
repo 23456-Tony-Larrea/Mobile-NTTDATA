@@ -7,10 +7,8 @@ import { RootStackParamList } from './src/url/types';
 import ProductDetailScreen from './src/views/ProductDetailScreen';
 import EditProductForm from './src/views/EditProductForm';
 
-// Crea el stack navigator
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// Componente principal de la app
 export default function App() {
   return (
     <NavigationContainer>

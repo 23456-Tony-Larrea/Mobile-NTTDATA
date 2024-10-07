@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Platform, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { UpdateProductAction, verifyIdExists } from '../actions/ProductActions';
@@ -26,11 +26,9 @@ export default function EditProductForm() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate data fetching
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Simulate a delay
         await new Promise(resolve => setTimeout(resolve, 1000));
         setId(product.id);
         setName(product.name);
@@ -76,9 +74,11 @@ export default function EditProductForm() {
     try {
       const response = await UpdateProductAction(productData);
       setErrors({});
+      Alert.alert("Éxito", "Producto actualizado con éxito");
     } catch (error) {
       console.error('Error updating product:', error);
       setErrors(handleApiErrors(error));
+      Alert.alert("Error", "Hubo un error al actualizar el producto");
     }
   };
 
